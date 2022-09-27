@@ -8,6 +8,11 @@ namespace CarService
     public struct Bid
     {
         /// <summary>
+        /// Номер заявки
+        /// </summary>
+        public long Id { get; set; }
+
+        /// <summary>
         /// Имя Фамилия Отчество
         /// </summary>
         public string LFP { get; set; }
