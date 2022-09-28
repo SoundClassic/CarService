@@ -45,6 +45,7 @@
     <Compile Include="Enums\Brands.cs" />
     <Compile Include="Enums\Statuses.cs" />
     <Compile Include="Enums\TypeWorks.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
