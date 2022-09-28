@@ -21,11 +21,6 @@ namespace CarService
         /// Марка автомобиля
         /// </summary>
         public Brands Brand { get; set; }
-
-        /// <summary>
-        /// Номер автомобиля
-        /// </summary>
-        public string Number { get; set; }
         
         /// <summary>
         /// Тип работы
