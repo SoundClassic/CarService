@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bid.cs" />
     <Compile Include="DBConnect\Access.cs" />
     <Compile Include="DBConnect\BidDao.cs" />
     <Compile Include="DBConnect\TypeWorksDao.cs" />
