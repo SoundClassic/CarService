@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarService", "CarService\Ca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientForm", "ClientForm\ClientForm.csproj", "{60F55EB8-FE46-485B-B338-9EA55967136B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerForm", "WorkerForm\WorkerForm.csproj", "{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{60F55EB8-FE46-485B-B338-9EA55967136B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60F55EB8-FE46-485B-B338-9EA55967136B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60F55EB8-FE46-485B-B338-9EA55967136B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
