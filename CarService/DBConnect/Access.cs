@@ -6,7 +6,7 @@ namespace CarService
     {
         public Access() : base("DbConnectionString") { }
 
-        public DbSet<TypeWorksDao> TypeWorks { get; set; }
-        public DbSet<BidDao> Bids { get; set; }
+        public DbSet<TypeWork> TypeWorks { get; set; }
+        public DbSet<Bid> Bids { get; set; }
     }
 }

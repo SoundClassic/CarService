@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CarService
 {
-    public class BidDao
+    public class Bid
     {
         [Key]
         public int Id_Bid { get; set; }
@@ -23,6 +23,6 @@ namespace CarService
 
         public string Comment { get; set; }
 
-        public virtual TypeWorksDao TypeWork { get; set; }
+        public virtual TypeWork TypeWork { get; set; }
     }
 }

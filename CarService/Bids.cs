@@ -5,7 +5,7 @@ namespace CarService
     /// <summary>
     /// Заявка
     /// </summary>
-    public struct Bid
+    public struct Bids
     {
         /// <summary>
         /// Номер заявки
