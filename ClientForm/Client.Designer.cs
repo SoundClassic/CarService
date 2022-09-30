@@ -29,30 +29,30 @@
         private void InitializeComponent()
         {
             this.FillBox = new System.Windows.Forms.GroupBox();
-            this.BidBox = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.LFP = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.BrandsList = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.TypeWork = new System.Windows.Forms.ComboBox();
-            this.FindBid = new System.Windows.Forms.Button();
             this.CreateBid = new System.Windows.Forms.Button();
-            this.FindBox = new System.Windows.Forms.GroupBox();
-            this.NumberBid = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.TypeWorksList = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.BrandsList = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.LFP = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.BidBox = new System.Windows.Forms.GroupBox();
             this.BidList = new System.Windows.Forms.DataGridView();
+            this.FindBid = new System.Windows.Forms.Button();
+            this.FindBox = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.NumberBid = new System.Windows.Forms.TextBox();
             this.FillBox.SuspendLayout();
             this.BidBox.SuspendLayout();
-            this.FindBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BidList)).BeginInit();
+            this.FindBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // FillBox
             // 
             this.FillBox.Controls.Add(this.CreateBid);
-            this.FillBox.Controls.Add(this.TypeWork);
+            this.FillBox.Controls.Add(this.TypeWorksList);
             this.FillBox.Controls.Add(this.label3);
             this.FillBox.Controls.Add(this.BrandsList);
             this.FillBox.Controls.Add(this.label2);
@@ -65,48 +65,23 @@
             this.FillBox.TabStop = false;
             this.FillBox.Text = "Заполнить заявку (Создать)";
             // 
-            // BidBox
+            // CreateBid
             // 
-            this.BidBox.Controls.Add(this.BidList);
-            this.BidBox.Location = new System.Drawing.Point(320, 10);
-            this.BidBox.Name = "BidBox";
-            this.BidBox.Size = new System.Drawing.Size(500, 500);
-            this.BidBox.TabIndex = 1;
-            this.BidBox.TabStop = false;
-            this.BidBox.Text = "Заявки";
+            this.CreateBid.Location = new System.Drawing.Point(10, 240);
+            this.CreateBid.Name = "CreateBid";
+            this.CreateBid.Size = new System.Drawing.Size(280, 51);
+            this.CreateBid.TabIndex = 7;
+            this.CreateBid.Text = "Создать заявку";
+            this.CreateBid.UseVisualStyleBackColor = true;
+            this.CreateBid.Click += new System.EventHandler(this.CreateBid_Click);
             // 
-            // label1
+            // TypeWorksList
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 30);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 22);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "ФИО:";
-            // 
-            // LFP
-            // 
-            this.LFP.Location = new System.Drawing.Point(10, 60);
-            this.LFP.Name = "LFP";
-            this.LFP.Size = new System.Drawing.Size(280, 30);
-            this.LFP.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 100);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(176, 22);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Марка автомобиля:";
-            // 
-            // BrandsList
-            // 
-            this.BrandsList.FormattingEnabled = true;
-            this.BrandsList.Location = new System.Drawing.Point(10, 130);
-            this.BrandsList.Name = "BrandsList";
-            this.BrandsList.Size = new System.Drawing.Size(280, 30);
-            this.BrandsList.TabIndex = 3;
+            this.TypeWorksList.FormattingEnabled = true;
+            this.TypeWorksList.Location = new System.Drawing.Point(10, 200);
+            this.TypeWorksList.Name = "TypeWorksList";
+            this.TypeWorksList.Size = new System.Drawing.Size(280, 30);
+            this.TypeWorksList.TabIndex = 5;
             // 
             // label3
             // 
@@ -117,13 +92,58 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Вид работы:";
             // 
-            // TypeWork
+            // BrandsList
             // 
-            this.TypeWork.FormattingEnabled = true;
-            this.TypeWork.Location = new System.Drawing.Point(10, 200);
-            this.TypeWork.Name = "TypeWork";
-            this.TypeWork.Size = new System.Drawing.Size(280, 30);
-            this.TypeWork.TabIndex = 5;
+            this.BrandsList.FormattingEnabled = true;
+            this.BrandsList.Location = new System.Drawing.Point(10, 130);
+            this.BrandsList.Name = "BrandsList";
+            this.BrandsList.Size = new System.Drawing.Size(280, 30);
+            this.BrandsList.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(10, 100);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(176, 22);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Марка автомобиля:";
+            // 
+            // LFP
+            // 
+            this.LFP.Location = new System.Drawing.Point(10, 60);
+            this.LFP.Name = "LFP";
+            this.LFP.Size = new System.Drawing.Size(280, 30);
+            this.LFP.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(60, 22);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "ФИО:";
+            // 
+            // BidBox
+            // 
+            this.BidBox.Controls.Add(this.BidList);
+            this.BidBox.Location = new System.Drawing.Point(320, 10);
+            this.BidBox.Name = "BidBox";
+            this.BidBox.Size = new System.Drawing.Size(500, 500);
+            this.BidBox.TabIndex = 1;
+            this.BidBox.TabStop = false;
+            this.BidBox.Text = "Заявки";
+            // 
+            // BidList
+            // 
+            this.BidList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.BidList.Location = new System.Drawing.Point(7, 30);
+            this.BidList.Name = "BidList";
+            this.BidList.RowHeadersWidth = 51;
+            this.BidList.RowTemplate.Height = 24;
+            this.BidList.Size = new System.Drawing.Size(480, 460);
+            this.BidList.TabIndex = 0;
             // 
             // FindBid
             // 
@@ -133,15 +153,7 @@
             this.FindBid.TabIndex = 6;
             this.FindBid.Text = "Найти заявку";
             this.FindBid.UseVisualStyleBackColor = true;
-            // 
-            // CreateBid
-            // 
-            this.CreateBid.Location = new System.Drawing.Point(10, 240);
-            this.CreateBid.Name = "CreateBid";
-            this.CreateBid.Size = new System.Drawing.Size(280, 51);
-            this.CreateBid.TabIndex = 7;
-            this.CreateBid.Text = "Создать заявку";
-            this.CreateBid.UseVisualStyleBackColor = true;
+            this.FindBid.Click += new System.EventHandler(this.FindBid_Click);
             // 
             // FindBox
             // 
@@ -156,22 +168,6 @@
             this.FindBox.TabStop = false;
             this.FindBox.Text = "Найти заявку";
             // 
-            // NumberBid
-            // 
-            this.NumberBid.Location = new System.Drawing.Point(10, 60);
-            this.NumberBid.Name = "NumberBid";
-            this.NumberBid.Size = new System.Drawing.Size(280, 30);
-            this.NumberBid.TabIndex = 7;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 30);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(133, 22);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Номер заявки:";
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -182,15 +178,21 @@
             this.label5.TabIndex = 9;
             this.label5.Text = "*Если заявка не найдена, создайте заявку";
             // 
-            // BidList
+            // label4
             // 
-            this.BidList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.BidList.Location = new System.Drawing.Point(7, 30);
-            this.BidList.Name = "BidList";
-            this.BidList.RowHeadersWidth = 51;
-            this.BidList.RowTemplate.Height = 24;
-            this.BidList.Size = new System.Drawing.Size(480, 460);
-            this.BidList.TabIndex = 0;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 30);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(133, 22);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Номер заявки:";
+            // 
+            // NumberBid
+            // 
+            this.NumberBid.Location = new System.Drawing.Point(10, 60);
+            this.NumberBid.Name = "NumberBid";
+            this.NumberBid.Size = new System.Drawing.Size(280, 30);
+            this.NumberBid.TabIndex = 7;
             // 
             // Client
             // 
@@ -208,9 +210,9 @@
             this.FillBox.ResumeLayout(false);
             this.FillBox.PerformLayout();
             this.BidBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.BidList)).EndInit();
             this.FindBox.ResumeLayout(false);
             this.FindBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.BidList)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -224,7 +226,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox BrandsList;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox TypeWork;
+        private System.Windows.Forms.ComboBox TypeWorksList;
         private System.Windows.Forms.Button CreateBid;
         private System.Windows.Forms.Button FindBid;
         private System.Windows.Forms.GroupBox FindBox;
