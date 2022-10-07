@@ -10,7 +10,7 @@ namespace CarService
         /// <summary>
         /// Номер заявки
         /// </summary>
-        public int NumberBid { get; set; }
+        public string NumberBid { get; set; }
 
         /// <summary>
         /// Статус работы
