@@ -7,7 +7,7 @@ namespace CarService
     {
         [Key]
         public int Id_Bid { get; set; }
-        public int NumberBid { get; set; }
+        public string NumberBid { get; set; }
 
         public string LFP { get; set; }
 
@@ -23,6 +23,6 @@ namespace CarService
 
         public string Comment { get; set; }
 
-        public virtual TypeWork TypeWork { get; set; }
+        public virtual TypeWork Type { get; set; }
     }
 }
