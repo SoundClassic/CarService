@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace CarService
@@ -73,6 +74,18 @@ namespace CarService
                 }
             }
             return true;
+        }
+
+        public static string GenerateNumberBid()
+        {
+            Random random = new Random(Guid.NewGuid().ToByteArray().Sum(x => x));
+            int num = random.Next(1000, 10000);
+            string word = "";
+            for (byte i = 0; i < 4; i++)
+            {
+                word += (char)random.Next('A', 'Z' + 1);
+            }
+            return word + num;
         }
     }
 }

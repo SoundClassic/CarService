@@ -51,13 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bids.cs" />
+    <Compile Include="BidDao.cs" />
     <Compile Include="DBConnect\Access.cs" />
     <Compile Include="DBConnect\Bid.cs" />
     <Compile Include="DBConnect\TypeWork.cs" />
     <Compile Include="Enums\Brands.cs" />
     <Compile Include="Enums\Statuses.cs" />
-    <Compile Include="Enums\TypeWorks.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
