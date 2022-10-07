@@ -13,6 +13,11 @@ namespace CarService
         public string NumberBid { get; set; }
 
         /// <summary>
+        /// Дата заказа
+        /// </summary>
+        public DateTime Date { get; set; }
+
+        /// <summary>
         /// Статус работы
         /// </summary>
         public Statuses Status { get; set; }

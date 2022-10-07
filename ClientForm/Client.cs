@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using CarService;
@@ -11,6 +12,7 @@ namespace ClientForm
         {
             InitializeComponent();
             InitializeCatalog();
+            InitializeDataGrid();
         }
 
         private void InitializeCatalog()
@@ -26,16 +28,41 @@ namespace ClientForm
             }
         }
 
-        private string GenerateNumberBid()
+        private void InitializeDataGrid()
         {
-            Random random = new Random(Guid.NewGuid().ToByteArray().Sum(x => x));
-            int num = random.Next(1000, 10000);
-            string word = "";
-            for (byte i = 0; i < 4; i++)
-            {
-                word += (char)random.Next('A', 'Z' + 1);
+            BidList.AllowUserToAddRows = false;
+            BidList.AllowDrop = false;
+            BidList.AllowUserToDeleteRows = false;
+            BidList.AllowUserToOrderColumns = false;
+            BidList.AllowUserToResizeColumns = false;
+            BidList.AllowUserToResizeRows = false;
+
+            BidList.ColumnCount = 3;
+            BidList.Columns[0].Name = "Номер заявки";
+            BidList.Columns[0].Width = 142;
+            BidList.Columns[1].Name = "Дата заявки";
+            BidList.Columns[1].Width = 142;
+            BidList.Columns[2].Name = "Статус заявки";
+            BidList.Columns[2].Width = 142;
+
+            List<BidDao> bids = new List<BidDao>();
+            using (var access = new Access())
+            { 
+                foreach(var bid in access.Bids.Where(bid => bid.Status == Statuses.Active.ToString()))
+                {
+                    bids.Add(new BidDao()
+                    {
+                        NumberBid = bid.NumberBid,
+                        Date = bid.Date,
+                        Status = Statuses.Active
+                    });
+                }
+
+                foreach (var bid in bids)
+                {
+                    BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
+                }
             }
-            return word + num;
         }
 
         private void CreateBid_Click(object sender, EventArgs e)
@@ -79,7 +106,7 @@ namespace ClientForm
             {
                 Bid bid = new Bid()
                 {
-                    NumberBid = GenerateNumberBid(),
+                    NumberBid = Helper.GenerateNumberBid(),
                     LFP = LFP.Text,
                     Brand = BrandsList.SelectedItem.ToString(),
                     Type = access.TypeWorks
@@ -91,6 +118,15 @@ namespace ClientForm
                 };
                 access.Bids.Add(bid);
                 access.SaveChanges();
+
+                BidDao bidAdd = new BidDao()
+                {
+                    NumberBid = bid.NumberBid,
+                    Date = bid.Date,
+                    Status = Statuses.Active
+                };
+                BidList.Rows.Add(bidAdd.NumberBid, bidAdd.Date, bidAdd.Status);
+                BidList.Refresh();
             }
         }
 
