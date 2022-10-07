@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CarService;
 
@@ -36,6 +37,7 @@ namespace ClientForm
             BidList.AllowUserToOrderColumns = false;
             BidList.AllowUserToResizeColumns = false;
             BidList.AllowUserToResizeRows = false;
+            BidList.ReadOnly = true;
 
             BidList.ColumnCount = 3;
             BidList.Columns[0].Name = "Номер заявки";
@@ -45,24 +47,45 @@ namespace ClientForm
             BidList.Columns[2].Name = "Статус заявки";
             BidList.Columns[2].Width = 142;
 
-            List<BidDao> bids = new List<BidDao>();
+            BidDao bidDao;
             using (var access = new Access())
             { 
                 foreach(var bid in access.Bids.Where(bid => bid.Status == Statuses.Active.ToString()))
                 {
-                    bids.Add(new BidDao()
+                    bidDao = new BidDao()
                     {
                         NumberBid = bid.NumberBid,
                         Date = bid.Date,
                         Status = Statuses.Active
-                    });
-                }
-
-                foreach (var bid in bids)
-                {
+                    };
                     BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
                 }
             }
+        }
+
+        static async Task AddBidAsync(string numberBid, string LFP, 
+            string brand, string typeWork, DateTime date)
+        {
+            await Task.Run(() =>
+            {
+                using (var access = new Access())
+                {
+                    Bid bid = new Bid()
+                    {
+                        NumberBid = numberBid,
+                        LFP = LFP,
+                        Brand = brand,
+                        Type = access.TypeWorks
+                                     .Where(type => type.Type == typeWork)
+                                     .First(),
+                        Date = date,
+                        Status = Statuses.Active.ToString(),
+                        Succes = false
+                    };
+                    access.Bids.Add(bid);
+                    access.SaveChanges();
+                }
+            });
         }
 
         private void CreateBid_Click(object sender, EventArgs e)
@@ -102,32 +125,28 @@ namespace ClientForm
                 return;
             }
 
-            using (var access = new Access())
-            {
-                Bid bid = new Bid()
-                {
-                    NumberBid = Helper.GenerateNumberBid(),
-                    LFP = LFP.Text,
-                    Brand = BrandsList.SelectedItem.ToString(),
-                    Type = access.TypeWorks
-                                 .Where(type => type.Type == TypeWorksList.SelectedItem.ToString())
-                                 .First(),
-                    Date = DateTime.Now,
-                    Status = Statuses.Active.ToString(),
-                    Succes = false
-                };
-                access.Bids.Add(bid);
-                access.SaveChanges();
+            string numberBid = Helper.GenerateNumberBid();
+            DateTime date = DateTime.Now;
 
-                BidDao bidAdd = new BidDao()
-                {
-                    NumberBid = bid.NumberBid,
-                    Date = bid.Date,
-                    Status = Statuses.Active
-                };
-                BidList.Rows.Add(bidAdd.NumberBid, bidAdd.Date, bidAdd.Status);
-                BidList.Refresh();
-            }
+            _ = AddBidAsync(numberBid, 
+                            LFP.Text,
+                            BrandsList.SelectedItem.ToString(),
+                            TypeWorksList.SelectedItem.ToString(),
+                            date);
+
+            BidDao bidAdd = new BidDao()
+            {
+                NumberBid = numberBid,
+                Date = date,
+                Status = Statuses.Active
+            };
+            BidList.Rows.Add(bidAdd.NumberBid, bidAdd.Date, bidAdd.Status);
+
+            LFP.Text = "";
+            BrandsList.Text = "";
+            BrandsList.SelectedItem = null;
+            TypeWorksList.Text = "";
+            TypeWorksList.SelectedItem = null;
         }
 
         private void FindBid_Click(object sender, EventArgs e)
