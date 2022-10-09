@@ -45,34 +45,35 @@ namespace CarService
             return true;
         }
 
-        public static bool IsNumber(this string number)
+        public static bool IsNumberBid(this string number)
         {
             if (string.IsNullOrWhiteSpace(number))
             {
                 return false;
             }
-            if(number.Length != 6 || number.Split(' ').Length != 1)
+            if(number.Length != 8)
             {
                 return false;
             }
-            if (!char.IsLetter(number[0]))
+            for(byte i = 0; i < 8; i++)
             {
-                return false;
-            }
-            for(byte i = 1; i < 4; i++)
-            {
-                if (!char.IsDigit(number[i]))
+                if (i < 4)
                 {
-                    return false;
+                    if (!char.IsLetter(number[i]))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (!char.IsDigit(number[i]))
+                    {
+                        return false;
+                    }
+
                 }
             }
-            for(byte i = 4; i < 6; i++)
-            {
-                if (!char.IsLetter(number[i]))
-                {
-                    return false;
-                }
-            }
+
             return true;
         }
 

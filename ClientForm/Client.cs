@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -61,6 +60,19 @@ namespace ClientForm
                     BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
                 }
             }
+        }
+
+        private void AddBidInGrid(string numberBid, DateTime date)
+        {
+            BidDao bidAdd = new BidDao()
+            {
+                NumberBid = numberBid,
+                Date = date,
+                Status = Statuses.Active
+            };
+            BidList.Rows.Add(bidAdd.NumberBid, bidAdd.Date, bidAdd.Status);
+
+            MessageBox.Show($"Номер вашей заявки: {numberBid}", "Уведомление!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         static async Task AddBidAsync(string numberBid, string LFP, 
@@ -134,13 +146,7 @@ namespace ClientForm
                             TypeWorksList.SelectedItem.ToString(),
                             date);
 
-            BidDao bidAdd = new BidDao()
-            {
-                NumberBid = numberBid,
-                Date = date,
-                Status = Statuses.Active
-            };
-            BidList.Rows.Add(bidAdd.NumberBid, bidAdd.Date, bidAdd.Status);
+            AddBidInGrid(numberBid, date);
 
             LFP.Text = "";
             BrandsList.Text = "";
@@ -151,7 +157,39 @@ namespace ClientForm
 
         private void FindBid_Click(object sender, EventArgs e)
         {
+            NumberBid.Text = NumberBid.Text.Trim().ToUpper();
 
+            if (!NumberBid.Text.IsNumberBid())
+            {
+                MessageBox.Show("Введенный номер заявки не корректный!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using(var access = new Access())
+            {
+                Bid bid = new Bid();
+                try
+                {
+                    bid = access.Bids
+                                .Where(findBid => findBid.NumberBid == NumberBid.Text &&
+                                       findBid.Status == Statuses.Delayed.ToString())
+                                .First();
+                    bid.Status = Statuses.Active.ToString();
+                }
+                catch (InvalidOperationException)
+                {
+                    MessageBox.Show("Заявка не найдена!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                access.Bids.Attach(bid);
+                access.Entry(bid).Property(x => x.Status).IsModified = true;
+                access.SaveChanges();
+
+                AddBidInGrid(bid.NumberBid, bid.Date);
+
+                NumberBid.Text = "";
+            }
         }
     }
 }
