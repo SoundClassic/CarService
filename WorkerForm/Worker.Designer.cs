@@ -1,6 +1,6 @@
 ﻿namespace WorkerForm
 {
-    partial class Form1
+    partial class Worker
     {
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -69,6 +69,7 @@
             this.BidList.RowTemplate.Height = 24;
             this.BidList.Size = new System.Drawing.Size(480, 465);
             this.BidList.TabIndex = 0;
+            this.BidList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.BidList_CellMouseDoubleClick);
             // 
             // ManagementBox
             // 
@@ -91,8 +92,9 @@
             this.RefreshBid.Name = "RefreshBid";
             this.RefreshBid.Size = new System.Drawing.Size(280, 40);
             this.RefreshBid.TabIndex = 6;
-            this.RefreshBid.Text = "Отобразить активные заявки";
+            this.RefreshBid.Text = "Отобразить незавершенные заявки";
             this.RefreshBid.UseVisualStyleBackColor = true;
+            this.RefreshBid.Click += new System.EventHandler(this.RefreshBid_Click);
             // 
             // SearchBox
             // 
@@ -134,6 +136,7 @@
             this.Search.TabIndex = 4;
             this.Search.Text = "Поиск";
             this.Search.UseVisualStyleBackColor = true;
+            this.Search.Click += new System.EventHandler(this.Search_Click);
             // 
             // Date
             // 
@@ -163,9 +166,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(10, 30);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 22);
+            this.label1.Size = new System.Drawing.Size(72, 22);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Код:";
+            this.label1.Text = "Номер:";
             // 
             // History
             // 
@@ -175,6 +178,7 @@
             this.History.TabIndex = 4;
             this.History.Text = "История заявок";
             this.History.UseVisualStyleBackColor = true;
+            this.History.Click += new System.EventHandler(this.History_Click);
             // 
             // ShelveBid
             // 
@@ -184,6 +188,7 @@
             this.ShelveBid.TabIndex = 2;
             this.ShelveBid.Text = "Отложить заявку";
             this.ShelveBid.UseVisualStyleBackColor = true;
+            this.ShelveBid.Click += new System.EventHandler(this.ShelveBid_Click);
             // 
             // CompleteBid
             // 
@@ -193,6 +198,7 @@
             this.CompleteBid.TabIndex = 1;
             this.CompleteBid.Text = "Завершить заявку";
             this.CompleteBid.UseVisualStyleBackColor = true;
+            this.CompleteBid.Click += new System.EventHandler(this.CompleteBid_Click);
             // 
             // TakeBid
             // 
@@ -202,8 +208,9 @@
             this.TakeBid.TabIndex = 0;
             this.TakeBid.Text = "Принять заявку";
             this.TakeBid.UseVisualStyleBackColor = true;
+            this.TakeBid.Click += new System.EventHandler(this.TakeBid_Click);
             // 
-            // Form1
+            // Worker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 22F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -212,7 +219,7 @@
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "Form1";
+            this.Name = "Worker";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Worker";
             this.groupBox1.ResumeLayout(false);

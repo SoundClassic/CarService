@@ -49,7 +49,7 @@ namespace ClientForm
             BidDao bidDao;
             using (var access = new Access())
             { 
-                foreach(var bid in access.Bids.Where(bid => bid.Status == Statuses.Active.ToString()))
+                foreach(var bid in access.Bids.Where(bid => bid.Status != Statuses.Completed.ToString()))
                 {
                     bidDao = new BidDao()
                     {
@@ -174,6 +174,7 @@ namespace ClientForm
                                 .Where(findBid => findBid.NumberBid == NumberBid.Text &&
                                        findBid.Status == Statuses.Delayed.ToString())
                                 .First();
+                    bid.Date = DateTime.Now;
                     bid.Status = Statuses.Active.ToString();
                 }
                 catch (InvalidOperationException)
