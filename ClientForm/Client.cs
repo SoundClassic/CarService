@@ -46,10 +46,11 @@ namespace ClientForm
             BidList.Columns[2].Name = "Статус заявки";
             BidList.Columns[2].Width = 142;
 
-            BidDao bidDao;
             using (var access = new Access())
-            { 
-                foreach(var bid in access.Bids.Where(bid => bid.Status != Statuses.Completed.ToString()))
+            {
+                BidDao bidDao;
+                foreach (var bid in access.Bids.Where(bid => bid.Status == Statuses.Active.ToString() ||
+                                                             bid.Status == Statuses.InWork.ToString()))
                 {
                     bidDao = new BidDao()
                     {
