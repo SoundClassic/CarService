@@ -277,7 +277,34 @@ namespace WorkerForm
 
         private void BidList_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            MessageBox.Show("Привет!");
+            if (BidList.SelectedRows.Count != 1)
+            {
+                MessageBox.Show("Необходимо выбрать одну заявку!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string numberBid = BidList.SelectedRows[0].Cells[0].Value.ToString();
+            using(var access = new Access())
+            {
+                Bid bid = access.Bids
+                                .Where(findBid => findBid.NumberBid == numberBid)
+                                .First();
+                string info = string.Empty;
+
+                info += $"Номер заявки: {bid.NumberBid}\n\r";
+                info += $"ФИО: {bid.LFP}\n\r";
+                info += $"Марка автомобиля: {bid.Brand}\n\r";
+                info += $"Тип работы: {bid.Type.Type}\n\r";
+                info += $"Стоимость работы: {bid.Type.Cost}\n\r";
+                info += $"Дата и время: {bid.Date}\n\r";
+                info += $"Статус: {bid.Status}\n\r";
+                if (!string.IsNullOrEmpty(bid.Comment))
+                {
+                    info += $"Комментарий: {bid.Comment}\n\r";
+                }
+
+                MessageBox.Show(info, "Информация");
+            }
         }
 
         private void Date_ValueChanged(object sender, EventArgs e)
