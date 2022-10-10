@@ -140,15 +140,16 @@
             // 
             // Date
             // 
-            this.Date.Location = new System.Drawing.Point(70, 70);
+            this.Date.Location = new System.Drawing.Point(70, 30);
             this.Date.Name = "Date";
             this.Date.Size = new System.Drawing.Size(200, 30);
             this.Date.TabIndex = 3;
+            this.Date.ValueChanged += new System.EventHandler(this.Date_ValueChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 70);
+            this.label2.Location = new System.Drawing.Point(10, 30);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 22);
             this.label2.TabIndex = 2;
@@ -156,7 +157,7 @@
             // 
             // NumberBid
             // 
-            this.NumberBid.Location = new System.Drawing.Point(70, 30);
+            this.NumberBid.Location = new System.Drawing.Point(70, 70);
             this.NumberBid.Name = "NumberBid";
             this.NumberBid.Size = new System.Drawing.Size(200, 30);
             this.NumberBid.TabIndex = 1;
@@ -164,7 +165,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 30);
+            this.label1.Location = new System.Drawing.Point(10, 70);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(72, 22);
             this.label1.TabIndex = 0;

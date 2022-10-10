@@ -12,6 +12,8 @@ namespace CarService
         
         public decimal Cost { get; set; }
 
+        public int AlottMinTime { get; set; }
+
         public virtual ICollection<Bid> Bids { get; set; }
     }
 }
