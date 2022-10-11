@@ -9,16 +9,22 @@ namespace WorkerForm
 {
     public partial class Worker : Form
     {
-        private bool refresh;
         private bool change;
+
+        private bool refresh;
+        private bool search;
+        private bool comment;
 
         public Worker()
         {
             InitializeComponent();
             InitializeDataGrid();
-            refresh = false;
             change = false;
+            refresh = false;
+            search = false;
+            comment = false;
         }
+
         private void InitializeDataGrid()
         {
             BidList.AllowUserToAddRows = false;
@@ -43,7 +49,7 @@ namespace WorkerForm
 
         private void ShowBids(Predicate<Bid> predicate)
         {
-            if(BidList.Rows.Count > 0)
+            if (BidList.Rows.Count > 0)
             {
                 BidList.Rows.Clear();
             }
@@ -97,13 +103,15 @@ namespace WorkerForm
                                 .Where(findBid => findBid.NumberBid == numberBid)
                                 .First();
 
-                return (DateTime.Now - bid.Date).Minutes > bid.Type.AlottMinTime;
+                return (DateTime.Now - bid.Date).Minutes >= bid.Type.AlottMinTime;
             }
         }
 
+        //-----События-Нажатия-----
+
         private void TakeBid_Click(object sender, EventArgs e)
         {
-            if (refresh)
+            if (refresh || search)
             {
                 MessageBox.Show("Невозможно изменить статус!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -127,7 +135,7 @@ namespace WorkerForm
 
         private void CompleteBid_Click(object sender, EventArgs e)
         {
-            if (refresh)
+            if (refresh || search)
             {
                 MessageBox.Show("Невозможно изменить статус!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -139,6 +147,12 @@ namespace WorkerForm
                 return;
             }
 
+            if (BidList.SelectedRows[0].Cells[2].Value.ToString() == Statuses.Active.ToString())
+            {
+                MessageBox.Show("Эта заявка еще не в работе!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string numberBid = BidList.SelectedRows[0].Cells[0].Value.ToString();
             if (!IsTimeToComplete(numberBid))
             {
@@ -146,14 +160,16 @@ namespace WorkerForm
                 return;
             }
 
+            this.comment = true;
             string comment = InputBox.Show("Введите комментарий:");
+            this.comment = false;
             ChangeBid(numberBid, Statuses.Completed.ToString(), comment);
             BidList.Rows.Remove(BidList.SelectedRows[0]);
         }
 
         private void ShelveBid_Click(object sender, EventArgs e)
         {
-            if (refresh)
+            if (refresh || search)
             {
                 MessageBox.Show("Невозможно изменить статус!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -171,27 +187,19 @@ namespace WorkerForm
                 return;
             }
 
+            this.comment = true;
             string comment = InputBox.Show("Введите комментарий:");
+            this.comment = false;
             ChangeBid(BidList.SelectedRows[0].Cells[0].Value.ToString(), Statuses.Delayed.ToString(), comment);
             BidList.Rows.Remove(BidList.SelectedRows[0]);
         }
 
-        private void RefreshBid_Click(object sender, EventArgs e)
-        {
-            if (refresh)
-            {
-                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
-                                bid.Status == Statuses.InWork.ToString());
-                refresh = false;
-            }
-        }
-
         private void Search_Click(object sender, EventArgs e)
         {
-            List<Control> controls = new List<Control>() {Date, NumberBid, LFP };
+            List<Control> controls = new List<Control>() { Date, NumberBid, LFP };
             List<Control> correct = new List<Control>();
 
-            foreach(Control control in controls)
+            foreach (Control control in controls)
             {
                 if (!string.IsNullOrWhiteSpace(control.Text))
                 {
@@ -223,7 +231,7 @@ namespace WorkerForm
                 }
             }
 
-            if(correct.Count == 0)
+            if (correct.Count == 0)
             {
                 MessageBox.Show("Введите хотя бы 1 корректный аргумент поиска!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -244,7 +252,7 @@ namespace WorkerForm
                 lambda = bid => bid.LFP == LFP.Text;
             }
 
-            for(byte i = 1; i < correct.Count; i++)
+            for (byte i = 1; i < correct.Count; i++)
             {
                 var @params = lambda.Parameters;
                 var body = lambda.Body;
@@ -263,11 +271,23 @@ namespace WorkerForm
             }
 
             ShowBids(lambda.Compile());
+            search = true;
+        }
+
+        private void RefreshBid_Click(object sender, EventArgs e)
+        {
+            if (refresh || search)
+            {
+                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
+                                bid.Status == Statuses.InWork.ToString());
+                refresh = false;
+                search = false;
+            }
         }
 
         private void History_Click(object sender, EventArgs e)
         {
-            if (!refresh)
+            if (!refresh || search)
             {
                 ShowBids(bid => bid.Status == Statuses.Completed.ToString() ||
                                 bid.Status == Statuses.Delayed.ToString());
@@ -307,9 +327,20 @@ namespace WorkerForm
             }
         }
 
+        //-----События-----
+
         private void Date_ValueChanged(object sender, EventArgs e)
         {
             change = true;
+        }
+
+        private void Worker_Activated(object sender, EventArgs e)
+        {
+            if (!refresh && !search && !comment)
+            {
+                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
+                                bid.Status == Statuses.InWork.ToString());
+            }
         }
     }
 }

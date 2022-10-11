@@ -223,6 +223,7 @@
             this.Name = "Worker";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Worker";
+            this.Activated += new System.EventHandler(this.Worker_Activated);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.BidList)).EndInit();
             this.ManagementBox.ResumeLayout(false);
