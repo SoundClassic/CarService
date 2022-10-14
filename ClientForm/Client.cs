@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,7 +15,6 @@ namespace ClientForm
             InitializeCatalog();
             InitializeDataGrid();
         }
-
         private void InitializeCatalog()
         {
             BrandsList.Items.Add(Brands.Toyota.ToString());
@@ -45,12 +45,18 @@ namespace ClientForm
             BidList.Columns[1].Width = 142;
             BidList.Columns[2].Name = "Статус заявки";
             BidList.Columns[2].Width = 142;
+        }
 
+        private void ShowBids(Predicate<Bid> predicate)
+        {
+            if (BidList.Rows.Count > 0)
+            {
+                BidList.Rows.Clear();
+            }
             using (var access = new Access())
             {
                 BidDao bidDao;
-                foreach (var bid in access.Bids.Where(bid => bid.Status == Statuses.Active.ToString() ||
-                                                             bid.Status == Statuses.InWork.ToString()))
+                foreach (var bid in access.Bids.Where(predicate.Invoke))
                 {
                     bidDao = new BidDao()
                     {
@@ -100,6 +106,8 @@ namespace ClientForm
                 }
             });
         }
+
+        //------События------
 
         private void CreateBid_Click(object sender, EventArgs e)
         {
@@ -180,7 +188,7 @@ namespace ClientForm
                 }
                 catch (InvalidOperationException)
                 {
-                    MessageBox.Show("Заявка не найдена!", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Заявка не найдена!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -191,6 +199,79 @@ namespace ClientForm
                 AddBidInGrid(bid.NumberBid, bid.Date);
 
                 NumberBid.Text = "";
+            }
+        }
+
+        private void BidList_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (BidList.SelectedRows.Count != 1)
+            {
+                MessageBox.Show("Необходимо выбрать одну заявку!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if(BidList.SelectedRows[0].Cells[2].Value.ToString() != Statuses.Completed.ToString() &&
+               BidList.SelectedRows[0].Cells[2].Value.ToString() != Statuses.Delayed.ToString())
+            {
+                return;
+            }
+
+            string numberBid = BidList.SelectedRows[0].Cells[0].Value.ToString();
+
+            using (var access = new Access())
+            {
+                Bid bid = access.Bids
+                                .Where(findBid => findBid.NumberBid == numberBid)
+                                .First();
+                string info = string.Empty;
+
+                info += $"Номер заявки: {bid.NumberBid}\n\r";
+                info += $"ФИО: {bid.LFP}\n\r";
+                info += $"Марка автомобиля: {bid.Brand}\n\r";
+                info += $"Тип работы: {bid.Type.Type}\n\r";
+                info += $"Стоимость работы: {bid.Type.Cost} рублей\n\r";
+                info += $"Дата и время: {bid.Date}\n\r";
+                info += $"Статус: {bid.Status}\n\r";
+                if (!string.IsNullOrEmpty(bid.Comment))
+                {
+                    info += $"Комментарий: {bid.Comment}\n\r";
+                }
+
+                MessageBox.Show(info, "Квитанция");
+            }
+
+            ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
+                     bid.Status == Statuses.InWork.ToString());
+        }
+
+        private void Client_Activated(object sender, EventArgs e)
+        {
+            if(BidList.Rows.Count == 0)
+            {
+                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
+                         bid.Status == Statuses.InWork.ToString());
+                return;
+            }
+
+            List<DataGridViewRow> rows = new List<DataGridViewRow>();
+            foreach(DataGridViewRow row in BidList.Rows)
+            {
+                rows.Add(row);
+            }
+
+            using(var access = new Access())
+            {
+                foreach (var row in rows)
+                {
+                    string numberBid = row.Cells[0].Value.ToString();
+                    var bid = access.Bids.Where(x => x.NumberBid == numberBid).First();
+
+                    if(bid.Status == Statuses.Completed.ToString() ||
+                       bid.Status == Statuses.Delayed.ToString())
+                    {
+                        BidList.Rows[BidList.Rows.IndexOf(row)].Cells[2].Value = bid.Status;
+                    }
+                }
             }
         }
     }

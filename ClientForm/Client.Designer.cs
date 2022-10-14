@@ -144,6 +144,7 @@
             this.BidList.RowTemplate.Height = 24;
             this.BidList.Size = new System.Drawing.Size(480, 460);
             this.BidList.TabIndex = 0;
+            this.BidList.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.BidList_CellMouseDoubleClick);
             // 
             // FindBid
             // 
@@ -207,6 +208,7 @@
             this.Name = "Client";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Client";
+            this.Activated += new System.EventHandler(this.Client_Activated);
             this.FillBox.ResumeLayout(false);
             this.FillBox.PerformLayout();
             this.BidBox.ResumeLayout(false);
