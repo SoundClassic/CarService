@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CarService;
@@ -19,13 +18,7 @@ namespace ClientForm
         {
             BrandsList.Items.Add(Brands.Toyota.ToString());
             BrandsList.Items.Add(Brands.Lexus.ToString());
-            using(var access = new Access())
-            {
-                foreach (var item in access.TypeWorks)
-                {
-                    TypeWorksList.Items.Add(item.Type);
-                }
-            }
+            TypeWorksList.Items.AddRange(Methods.GetTypeWorks().ToArray());
         }
 
         private void InitializeDataGrid()
@@ -47,38 +40,21 @@ namespace ClientForm
             BidList.Columns[2].Width = 142;
         }
 
-        private void ShowBids(Predicate<Bid> predicate)
+        private void ShowBids()
         {
             if (BidList.Rows.Count > 0)
             {
                 BidList.Rows.Clear();
             }
-            using (var access = new Access())
+            foreach(var bid in Methods.GetActiveBids())
             {
-                BidDao bidDao;
-                foreach (var bid in access.Bids.Where(predicate.Invoke))
-                {
-                    bidDao = new BidDao()
-                    {
-                        NumberBid = bid.NumberBid,
-                        Date = bid.Date,
-                        Status = Statuses.Active
-                    };
-                    BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
-                }
+                BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
             }
         }
 
-        private void AddBidInGrid(string numberBid, DateTime date)
+        private void AddBidInGrid(string numberBid, DateTime date, string status)
         {
-            BidDao bidAdd = new BidDao()
-            {
-                NumberBid = numberBid,
-                Date = date,
-                Status = Statuses.Active
-            };
-            BidList.Rows.Add(bidAdd.NumberBid, bidAdd.Date, bidAdd.Status);
-
+            BidList.Rows.Add(numberBid, date, status);
             MessageBox.Show($"Номер вашей заявки: {numberBid}", "Уведомление!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -87,23 +63,7 @@ namespace ClientForm
         {
             await Task.Run(() =>
             {
-                using (var access = new Access())
-                {
-                    Bid bid = new Bid()
-                    {
-                        NumberBid = numberBid,
-                        LFP = LFP,
-                        Brand = brand,
-                        Type = access.TypeWorks
-                                     .Where(type => type.Type == typeWork)
-                                     .First(),
-                        Date = date,
-                        Status = Statuses.Active.ToString(),
-                        Succes = false
-                    };
-                    access.Bids.Add(bid);
-                    access.SaveChanges();
-                }
+                Methods.AddBid(numberBid, LFP, brand, typeWork, date);
             });
         }
 
@@ -146,7 +106,7 @@ namespace ClientForm
                 return;
             }
 
-            string numberBid = Helper.GenerateNumberBid();
+            string numberBid = Methods.GenerateNumberBid();
             DateTime date = DateTime.Now;
 
             _ = AddBidAsync(numberBid, 
@@ -155,7 +115,7 @@ namespace ClientForm
                             TypeWorksList.SelectedItem.ToString(),
                             date);
 
-            AddBidInGrid(numberBid, date);
+            AddBidInGrid(numberBid, date, Statuses.Active.ToString());
 
             LFP.Text = "";
             BrandsList.Text = "";
@@ -174,31 +134,16 @@ namespace ClientForm
                 return;
             }
 
-            using(var access = new Access())
+            try
             {
-                Bid bid = new Bid();
-                try
-                {
-                    bid = access.Bids
-                                .Where(findBid => findBid.NumberBid == NumberBid.Text &&
-                                       findBid.Status == Statuses.Delayed.ToString())
-                                .First();
-                    bid.Date = DateTime.Now;
-                    bid.Status = Statuses.Active.ToString();
-                }
-                catch (InvalidOperationException)
-                {
-                    MessageBox.Show("Заявка не найдена!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                access.Bids.Attach(bid);
-                access.Entry(bid).Property(x => x.Status).IsModified = true;
-                access.SaveChanges();
-
-                AddBidInGrid(bid.NumberBid, bid.Date);
-
+                BidDao bid = Methods.FindDeleayedBid(NumberBid.Text);
+                AddBidInGrid(bid.NumberBid, bid.Date, bid.Status);
                 NumberBid.Text = "";
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("Заявка не найдена!", "Предупреждение!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
         }
 
@@ -217,39 +162,16 @@ namespace ClientForm
             }
 
             string numberBid = BidList.SelectedRows[0].Cells[0].Value.ToString();
-
-            using (var access = new Access())
-            {
-                Bid bid = access.Bids
-                                .Where(findBid => findBid.NumberBid == numberBid)
-                                .First();
-                string info = string.Empty;
-
-                info += $"Номер заявки: {bid.NumberBid}\n\r";
-                info += $"ФИО: {bid.LFP}\n\r";
-                info += $"Марка автомобиля: {bid.Brand}\n\r";
-                info += $"Тип работы: {bid.Type.Type}\n\r";
-                info += $"Стоимость работы: {bid.Type.Cost} рублей\n\r";
-                info += $"Дата и время: {bid.Date}\n\r";
-                info += $"Статус: {bid.Status}\n\r";
-                if (!string.IsNullOrEmpty(bid.Comment))
-                {
-                    info += $"Комментарий: {bid.Comment}\n\r";
-                }
-
-                MessageBox.Show(info, "Квитанция");
-            }
-
-            ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
-                     bid.Status == Statuses.InWork.ToString());
+            string info = Methods.GetInfo(numberBid);
+            MessageBox.Show(info, "Квитанция");
+            ShowBids();
         }
 
         private void Client_Activated(object sender, EventArgs e)
         {
             if(BidList.Rows.Count == 0)
             {
-                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
-                         bid.Status == Statuses.InWork.ToString());
+                ShowBids();
                 return;
             }
 
@@ -259,18 +181,14 @@ namespace ClientForm
                 rows.Add(row);
             }
 
-            using(var access = new Access())
+            foreach (var row in rows)
             {
-                foreach (var row in rows)
-                {
-                    string numberBid = row.Cells[0].Value.ToString();
-                    var bid = access.Bids.Where(x => x.NumberBid == numberBid).First();
+                string numberBid = row.Cells[0].Value.ToString();
+                var bid = Methods.FindBid(numberBid);
 
-                    if(bid.Status == Statuses.Completed.ToString() ||
-                       bid.Status == Statuses.Delayed.ToString())
-                    {
-                        BidList.Rows[BidList.Rows.IndexOf(row)].Cells[2].Value = bid.Status;
-                    }
+                if (bid.Status != Statuses.Active.ToString())
+                {
+                    BidList.Rows[BidList.Rows.IndexOf(row)].Cells[2].Value = bid.Status;
                 }
             }
         }
