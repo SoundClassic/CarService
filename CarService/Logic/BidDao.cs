@@ -20,6 +20,6 @@ namespace CarService
         /// <summary>
         /// Статус работы
         /// </summary>
-        public Statuses Status { get; set; }
+        public string Status { get; set; }
     }
 }
