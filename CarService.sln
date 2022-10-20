@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientForm", "ClientForm\Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerForm", "WorkerForm\WorkerForm.csproj", "{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D3274520-6466-40E2-9E7C-D6A188B2C64B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EC5DF2B-BA6A-403E-A5D5-B620CFDF7B7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3274520-6466-40E2-9E7C-D6A188B2C64B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3274520-6466-40E2-9E7C-D6A188B2C64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3274520-6466-40E2-9E7C-D6A188B2C64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3274520-6466-40E2-9E7C-D6A188B2C64B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
