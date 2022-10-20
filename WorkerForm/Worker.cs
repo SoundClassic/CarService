@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using CarService;
 
@@ -43,67 +41,18 @@ namespace WorkerForm
             BidList.Columns[2].Name = "Статус заявки";
             BidList.Columns[2].Width = 142;
 
-            ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
-                            bid.Status == Statuses.InWork.ToString());
+            ShowBids(Methods.GetActiveBids());
         }
 
-        private void ShowBids(Predicate<Bid> predicate)
+        private void ShowBids(List<BidDao> bids)
         {
             if (BidList.Rows.Count > 0)
             {
                 BidList.Rows.Clear();
             }
-            using (var access = new Access())
+            foreach (var bid in bids)
             {
-                BidDao bidDao;
-                foreach (var bid in access.Bids.Where(predicate.Invoke))
-                {
-                    bidDao = new BidDao()
-                    {
-                        NumberBid = bid.NumberBid,
-                        Date = bid.Date,
-                        Status = Statuses.Active
-                    };
-                    BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
-                }
-            }
-        }
-
-        private void ChangeBid(string numberBid, string status, string comment)
-        {
-            using (var access = new Access())
-            {
-                Bid bid = access.Bids
-                                .Where(findBid => findBid.NumberBid == numberBid)
-                                .First();
-                access.Bids.Attach(bid);
-                bid.Status = status;
-                access.Entry(bid).Property(x => x.Status).IsModified = true;
-
-                if (status == Statuses.Completed.ToString())
-                {
-                    bid.Succes = true;
-                    access.Entry(bid).Property(x => x.Succes).IsModified = true;
-                }
-
-                if (!string.IsNullOrEmpty(comment))
-                {
-                    bid.Comment = comment;
-                    access.Entry(bid).Property(x => x.Comment).IsModified = true;
-                }
-                access.SaveChanges();
-            }
-        }
-
-        private bool IsTimeToComplete(string numberBid)
-        {
-            using(var access = new Access())
-            {
-                Bid bid = access.Bids
-                                .Where(findBid => findBid.NumberBid == numberBid)
-                                .First();
-
-                return (DateTime.Now - bid.Date).Minutes >= bid.Type.AlottMinTime;
+                BidList.Rows.Add(bid.NumberBid, bid.Date, bid.Status);
             }
         }
 
@@ -129,7 +78,7 @@ namespace WorkerForm
                 return;
             }
 
-            ChangeBid(BidList.SelectedRows[0].Cells[0].Value.ToString(), Statuses.InWork.ToString(), null);
+            Methods.ChangeBid(BidList.SelectedRows[0].Cells[0].Value.ToString(), Statuses.InWork.ToString(), null);
             BidList.SelectedRows[0].Cells[2].Value = Statuses.InWork.ToString();
         }
 
@@ -154,7 +103,7 @@ namespace WorkerForm
             }
 
             string numberBid = BidList.SelectedRows[0].Cells[0].Value.ToString();
-            if (!IsTimeToComplete(numberBid))
+            if (!Methods.IsTimeToComplete(numberBid))
             {
                 MessageBox.Show("Невозможно закрыть заявку! Положенное время не истекло.", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -163,7 +112,7 @@ namespace WorkerForm
             this.comment = true;
             string comment = InputBox.Show("Введите комментарий:");
             this.comment = false;
-            ChangeBid(numberBid, Statuses.Completed.ToString(), comment);
+            Methods.ChangeBid(numberBid, Statuses.Completed.ToString(), comment);
             BidList.Rows.Remove(BidList.SelectedRows[0]);
         }
 
@@ -190,7 +139,7 @@ namespace WorkerForm
             this.comment = true;
             string comment = InputBox.Show("Введите комментарий:");
             this.comment = false;
-            ChangeBid(BidList.SelectedRows[0].Cells[0].Value.ToString(), Statuses.Delayed.ToString(), comment);
+            Methods.ChangeBid(BidList.SelectedRows[0].Cells[0].Value.ToString(), Statuses.Delayed.ToString(), comment);
             BidList.Rows.Remove(BidList.SelectedRows[0]);
         }
 
@@ -237,40 +186,35 @@ namespace WorkerForm
                 return;
             }
 
-
-            Expression<Predicate<Bid>> lambda;
-            if (correct[0].Equals(Date))
+            List<object> @params = new List<object>();
+            for (byte i = 0; i < correct.Count; i++)
             {
-                lambda = bid => bid.Date.Date == Date.Value.Date;
-            }
-            else if (correct[0].Equals(NumberBid))
-            {
-                lambda = bid => bid.NumberBid == NumberBid.Text;
-            }
-            else
-            {
-                lambda = bid => bid.LFP == LFP.Text;
-            }
-
-            for (byte i = 1; i < correct.Count; i++)
-            {
-                var @params = lambda.Parameters;
-                var body = lambda.Body;
-                if (correct[i].Equals(NumberBid))
+                if (correct[i].Equals(Date))
                 {
-                    var newCheck = Expression.Equal(Expression.PropertyOrField(@params[0], "NumberBid"), Expression.Constant(NumberBid.Text));
-                    var fullExpression = Expression.And(body, newCheck);
-                    lambda = Expression.Lambda<Predicate<Bid>>(fullExpression, @params);
+                    @params.Add(Date.Value.Date);
+                }
+                else if (correct[i].Equals(NumberBid))
+                {
+                    @params.Add(NumberBid.Text);
                 }
                 else
                 {
-                    var newCheck = Expression.Equal(Expression.PropertyOrField(@params[0], "LFP"), Expression.Constant(LFP.Text));
-                    var fullExpression = Expression.And(body, newCheck);
-                    lambda = Expression.Lambda<Predicate<Bid>>(fullExpression, @params);
+                    @params.Add(LFP.Text);
                 }
             }
 
-            ShowBids(lambda.Compile());
+            switch (@params.Count)
+            {
+                case 1:
+                    ShowBids(Methods.Search(@params[0]));
+                    break;
+                case 2:
+                    ShowBids(Methods.Search(@params[0], @params[1]));
+                    break;
+                case 3:
+                    ShowBids(Methods.Search(@params[0], @params[1], @params[2]));
+                    break;
+            }
             search = true;
         }
 
@@ -278,8 +222,7 @@ namespace WorkerForm
         {
             if (refresh || search)
             {
-                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
-                                bid.Status == Statuses.InWork.ToString());
+                ShowBids(Methods.GetActiveBids());
                 refresh = false;
                 search = false;
             }
@@ -289,8 +232,7 @@ namespace WorkerForm
         {
             if (!refresh || search)
             {
-                ShowBids(bid => bid.Status == Statuses.Completed.ToString() ||
-                                bid.Status == Statuses.Delayed.ToString());
+                ShowBids(Methods.GetHistory());
                 refresh = true;
             }
         }
@@ -304,27 +246,8 @@ namespace WorkerForm
             }
 
             string numberBid = BidList.SelectedRows[0].Cells[0].Value.ToString();
-            using(var access = new Access())
-            {
-                Bid bid = access.Bids
-                                .Where(findBid => findBid.NumberBid == numberBid)
-                                .First();
-                string info = string.Empty;
-
-                info += $"Номер заявки: {bid.NumberBid}\n\r";
-                info += $"ФИО: {bid.LFP}\n\r";
-                info += $"Марка автомобиля: {bid.Brand}\n\r";
-                info += $"Тип работы: {bid.Type.Type}\n\r";
-                info += $"Стоимость работы: {bid.Type.Cost}\n\r";
-                info += $"Дата и время: {bid.Date}\n\r";
-                info += $"Статус: {bid.Status}\n\r";
-                if (!string.IsNullOrEmpty(bid.Comment))
-                {
-                    info += $"Комментарий: {bid.Comment}\n\r";
-                }
-
-                MessageBox.Show(info, "Информация");
-            }
+            string info = Methods.GetInfo(numberBid);
+            MessageBox.Show(info, "Информация");
         }
 
         //-----События-----
@@ -338,8 +261,7 @@ namespace WorkerForm
         {
             if (!refresh && !search && !comment)
             {
-                ShowBids(bid => bid.Status == Statuses.Active.ToString() ||
-                                bid.Status == Statuses.InWork.ToString());
+                ShowBids(Methods.GetActiveBids());
             }
         }
     }
